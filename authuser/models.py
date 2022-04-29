@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
             is_staff=False,
             is_superuser=False
         )
-        user.set_password(password)  # change password to hash
+        user.set_password(password)
         user.is_active = is_active
         user.subscriber = is_subscriber
         user.author = is_author
@@ -55,16 +55,5 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_full_name(self):
-        return self.email
-
     def __str__(self):
         return self.email
-
-    @property
-    def get_is_subscriber(self):
-        return self.is_subscriber
-
-    @property
-    def get_is_author(self):
-        return self.is_author

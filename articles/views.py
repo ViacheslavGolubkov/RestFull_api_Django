@@ -1,20 +1,17 @@
+from django.contrib.auth.models import AnonymousUser
 from articles.serializers import ArticleSerializer
 from articles.models import Article
-from articles.permissions import IsAuthorOrReadOnly, IsAnon
+from articles.permissions import IsAuthorOrReadOnly
 from rest_framework import viewsets
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
-
+    queryset = Article.objects.filter(is_public=True)
+    permission_classes = (IsAuthorOrReadOnly,)
 
     def get_queryset(self):
         username = self.request.user
-        if username.is_active:
-            return Article.objects.all()
-        return Article.objects.filter(is_public=True)
-
-    def get_permissions(self):
-        if not self.request.user.is_active:
-            return (IsAnon(),)
-        return (IsAuthorOrReadOnly(),)
+        if str(username) == 'AnonymousUser':
+            return Article.objects.filter(is_public=True)
+        return Article.objects.all()
